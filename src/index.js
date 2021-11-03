@@ -1,29 +1,28 @@
-const express = require('express');
-const path = require('path');
-const http = require('http');
-const socketio = require('socket.io')
+const app = require("express")();
+const http = require("http").createServer(app);
+const io = require("socket.io")(http, {
+  cors: {
+    origins: ["http://localhost:4200"],
+  },
+});
 
-const app = express()
-const server = http.createServer(app)
-const io = socketio(server)
+app.get("/", (req, res) => {
+  res.send("<h1>Hey Socket.io</h1>");
+});
 
-port = process.env.PORT || 3000
-const publicDirectoryPath = path.join(__dirname, '../public')
+io.on("connection", (socket) => {
+  console.log("a user connected");
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+  socket.on("client msg", (msg) => {
+    console.log("message", msg);
+  });
+});
 
-app.use(express.static(publicDirectoryPath));
-
-let count = 0;
-
-io.on('connection', (socket)=>{
-    console.log('new websocket connection')
-    socket.emit('countUpdated', count)
-
-    socket.on('increment', ()=>{
-        count++
-        socket.emit('countUpdated', count)
-    })
-})
-
-server.listen(port, ()=>{
-    console.log(`server is up on port: ${port}`)
-})
+http.listen(3000, () => {
+  console.log("listening on *:3000");
+});

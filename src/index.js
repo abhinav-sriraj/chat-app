@@ -15,12 +15,14 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
   socket.on("client msg", (msg) => {
     console.log("message", msg);
   });
+  socket.emit("server msg", "Hi Angular, from node")
+  socket.on('user Message', (msg)=>{
+    console.log('user says', msg)
+    socket.broadcast.emit("recieve msg", msg)
+  })
 });
 
 http.listen(3000, () => {
